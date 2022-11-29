@@ -93,10 +93,28 @@ class UserServiceTest {
     void findByUsersId() {
 
         //given
-        given(userRepository.findByUserId(101)).willReturn((user));
+        given(userRepository.findById(101)).willReturn(Optional.of(user));
         // when
-        User savedUser = userService.findByUsersId(user.getUserId());
+        User savedUser = userService.findByUsersId(user.getUserId()).get();
         // then
         assertThat(savedUser).isNotNull();
+    }
+
+    @Test
+    void updateUser() {
+        // given - precondition or setup
+        given(userRepository.save(user)).willReturn(user);
+        user.setName("Mona");
+        user.setAddress("Varanasi");
+        user.setAge(30);
+
+        // when -  action or the behaviour that we are going test
+        User updatedUser = userService.updateUser(user);
+
+        // then - verify the output
+        assertThat(updatedUser.getName()).isEqualTo("Mona");
+        assertThat(updatedUser.getAddress()).isEqualTo("Varanasi");
+        assertThat(updatedUser.getAge()).isEqualTo(30);
+
     }
 }

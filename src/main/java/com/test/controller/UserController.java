@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -32,8 +33,9 @@ public class UserController {
     // Get Handler --> get user by id
     @GetMapping("/get/{id}")
     public ResponseEntity<User> getUser(@PathVariable Integer id){
-        User user =  userService.findByUsersId(id);
-        return  ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(user);
+        return userService.findByUsersId(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
 
     }
 
@@ -46,5 +48,19 @@ public class UserController {
     @DeleteMapping(value="/remove/{userId}")
     public void removeUser(@PathVariable Integer userId) {
         this.userService.deleteUser(userId);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<User> updateUser(@PathVariable("id") Integer userId,
+                                                   @RequestBody User user){
+        return userService.findByUsersId(userId)
+                .map(savedUser -> {
+                    savedUser.setName(user.getName());
+                    savedUser.setAge(user.getAge());
+                    savedUser.setAddress(user.getAddress());
+                    User updatedUser = userService.updateUser(savedUser);
+                    return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

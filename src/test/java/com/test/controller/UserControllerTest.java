@@ -1,6 +1,7 @@
 package com.test.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 //import net.javaguides.springboot.model.Employee;
 //import net.javaguides.springboot.service.EmployeeService;
@@ -113,7 +114,7 @@ class UserControllerTest {
                         .age(45)
                         .address("Chennai")
                         .build();
-                given(userService.findByUsersId(uId)).willReturn((user));
+                given(userService.findByUsersId(uId)).willReturn((Optional.of(user)));
 
                 // when -  action or the behaviour that we are going test
                 ResultActions response = mockMvc.perform(get("/user/get/{id}", uId));
@@ -168,5 +169,37 @@ class UserControllerTest {
         // then - verify the output
         response.andExpect(status().isOk())
                 .andDo(print());
+    }
+
+    @Test
+    void updateUser() throws Exception {
+        Integer userId = 101;
+        User savedUser = User.builder()
+                .name("Monu")
+                .age(24)
+                .address("Pune")
+                .build();
+
+        User updatedUser = User.builder()
+                .name("Sonu")
+                .age(25)
+                .address("Karwar")
+                .build();
+        given(userService.findByUsersId(userId)).willReturn(Optional.of(savedUser));
+        given(userService.updateUser(any(User.class)))
+                .willAnswer((invocation)-> invocation.getArgument(0));
+
+        // when -  action or the behaviour that we are going test
+        ResultActions response = mockMvc.perform(put("/user/{id}", userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatedUser)));
+
+
+        // then - verify the output
+        response.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.name", is(updatedUser.getName())))
+                .andExpect(jsonPath("$.age", is(updatedUser.getAge())))
+                .andExpect(jsonPath("$.address",is(updatedUser.getAddress())));
     }
 }
