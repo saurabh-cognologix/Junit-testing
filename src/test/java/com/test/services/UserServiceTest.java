@@ -33,20 +33,20 @@ class UserServiceTest {
     @BeforeEach
     void setUp(){
 
-//        Optional<User> user = Optional.of(new User(1,"Ranno",25,"Basti"));
-//        Mockito.when(repository.findByAddress("Basti")).thenReturn(user);
+//        Optional<User> user = Optional.of(new User(1,"Mona",25,"Varanasi"));
+//        Mockito.when(repository.findByAddress("Banaras")).thenReturn(user);
         user = User.builder()
                 .userId(101)
                 .name("Sonu")
                 .age(24)
-                .address("Banatas")
+                .address("Banaras")
                 .build();
     }
 
 
     @Test
     void addUser() {
-//        User user = new User(1,"Ranno",33,"Basti");
+//        User user = new User(1,"Usha Fan",33,"Delhi");
 //        when(repository.save(user)).thenReturn(user);
 //        assertEquals(user, userService.addUser(user));
         given(userRepository.findById(user.getUserId()))
