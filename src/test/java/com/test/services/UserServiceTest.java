@@ -37,9 +37,9 @@ class UserServiceTest {
 //        Mockito.when(repository.findByAddress("Basti")).thenReturn(user);
         user = User.builder()
                 .userId(101)
-                .name("Ranno")
+                .name("Sonu")
                 .age(24)
-                .address("Basti")
+                .address("Banatas")
                 .build();
     }
 
@@ -52,6 +52,7 @@ class UserServiceTest {
         given(userRepository.findById(user.getUserId()))
                 .willReturn(Optional.empty());
         given(userRepository.save(user)).willReturn(user);
+
         User savedUser = userService.addUser(user);
         assertThat(savedUser).isNotNull();
 
